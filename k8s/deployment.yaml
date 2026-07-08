@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camino-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camino-auth
+  template:
+    metadata:
+      labels:
+        app: camino-auth
+    spec:
+      containers:
+        - name: camino-auth
+          image: camino-auth:0.1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camino-auth-svc
+spec:
+  selector:
+    app: camino-auth
+  ports:
+    - port: 80
+      targetPort: 8080
