@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: camino
+      POSTGRES_USER: camino
+      POSTGRES_PASSWORD: camino_local_pw
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/camino
+      SPRING_DATASOURCE_USERNAME: camino
+      SPRING_DATASOURCE_PASSWORD: camino_local_pw
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  postgres_data:
