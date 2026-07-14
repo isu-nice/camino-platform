@@ -9,10 +9,12 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        service: [auth-service, albergue-service]
     defaults:
       run:
-        working-directory: ./auth-service
+        working-directory: ./${{ matrix.service }}
 
     steps:
       - name: Checkout code
