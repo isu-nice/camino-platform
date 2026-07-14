@@ -7,6 +7,10 @@ spring:
     username: camino
     password: ${DB_PASSWORD:camino_local_pw}
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: true
+  sql:
+    init:
+      mode: always
