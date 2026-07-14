@@ -40,5 +40,5 @@ out/
 .vscode/
 
 ### ENV ###
- .env
- *.pem
+.env
+*.pem

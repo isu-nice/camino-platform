@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/camino
     username: camino
-    password: camino_local_pw
+    password: ${DB_PASSWORD:camino_local_pw}
   jpa:
     hibernate:
       ddl-auto: update
@@ -10,3 +10,6 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: ${JWT_SECRET:camino-local-dev-secret-key-change-this-in-production-1234567890}
