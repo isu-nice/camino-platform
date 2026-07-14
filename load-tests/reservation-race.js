@@ -22,6 +22,6 @@ export default function () {
     console.log(`status: ${res.status}, body: ${res.body}`);
 
     check(res, {
-        '예약 성공(200)': (r) => r.status === 200,
+        '정상 응답(200 또는 409)': (r) => r.status === 200 || r.status === 409,
     });
 }
