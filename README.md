@@ -51,8 +51,9 @@
 - [x] Auth Service — 회원가입, 로그인, JWT 발급
 - [x] Albergue Service — 예약 API (기본 버전)
 - [x] k6 부하테스트로 동시 예약 충돌 재현 → [트러블슈팅 로그](./TROUBLESHOOTING.md)
-- [ ] 동시성 충돌 처리 (409 응답, 재시도 로직)
-- [ ] Redis 분산 락 도입 및 비교
+- [x] 동시성 충돌 처리 (409 응답, 재시도 로직)
+- [x] Redis 분산 락 도입 및 비교 (낙관적 락+재시도 vs 분산 락)
+- [x] CI matrix 전략으로 멀티서비스 병렬 빌드
 - [ ] DB 커넥션 풀 / N+1 쿼리 / 캐시 스탬피드 시나리오
 - [ ] Notification Service (FastAPI)
 - [ ] GKE 배포 + Terraform
