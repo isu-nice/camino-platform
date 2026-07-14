@@ -30,4 +30,5 @@ public class Pilgrim {
     public Long getId() { return id; }
     public String getEmail() { return email; }
     public String getNickname() { return nickname; }
+    public String getPassword() { return password; }
 }

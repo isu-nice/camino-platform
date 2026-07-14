@@ -1,5 +1,6 @@
 package com.camino.auth.controller;
 
+import com.camino.auth.dto.LoginRequest;
 import com.camino.auth.dto.SignupRequest;
 import com.camino.auth.service.AuthService;
 import jakarta.validation.Valid;
@@ -20,5 +21,11 @@ public class AuthController {
     public ResponseEntity<Long> signup(@Valid @RequestBody SignupRequest request) {
         Long id = authService.signup(request);
         return ResponseEntity.ok(id);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
+        String token = authService.login(request);
+        return ResponseEntity.ok(token);
     }
 }
