@@ -14,7 +14,7 @@
                 Client
                   │
         ┌─────────┴─────────┐
-        │   GKE 클러스터     │
+        │   GKE 클러스터      │
         │                   │
    ┌────▼────┐   ┌─────────▼──────┐
    │  Auth   │   │   Albergue     │
@@ -22,12 +22,12 @@
    │(Spring) │   │  (Spring)      │
    └────┬────┘   └────────┬───────┘
         │                 │
-        └────────┬────────┘
+        └────────-┬───────┘
                   │
         ┌─────────┴─────────┐
-        │   PostgreSQL       │
-        │   Redis            │
-        └─────────────────────┘
+        │   PostgreSQL      │
+        │   Redis           │
+        └───────────────────┘
 
 (추후 추가 예정: Notification Service, GKE 배포, Terraform, CI/CD 완성)
 ```
@@ -57,10 +57,11 @@
 - [x] DB 커넥션 풀 고갈 시나리오 (25.75% → 100% 성공률)
 - [x] N+1 쿼리 최적화 (9회 → 1회 쿼리)
 - [x] 캐시 스탬피드 시나리오 (분산 락 재사용, DB 쿼리 상수화)
+- [x] k8s 리소스 최적화 (request/limit, OOMKilled 재현/해결)
 - [ ] Notification Service (FastAPI)
 - [ ] GKE 배포 + Terraform
 - [ ] Prometheus + Grafana 모니터링
-- [ ] k8s 리소스 최적화 (request/limit, HPA)
+- [ ] HPA (오토스케일링)
 
 ## 프로젝트 구조
 
