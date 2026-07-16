@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camino-albergue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camino-albergue
+  template:
+    metadata:
+      labels:
+        app: camino-albergue
+    spec:
+      containers:
+        - name: camino-albergue
+          image: camino-albergue:0.1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres-svc:5432/camino"
+            - name: REDIS_HOST
+              value: "redis-svc"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camino-albergue-svc
+spec:
+  selector:
+    app: camino-albergue
+  ports:
+    - port: 80
+      targetPort: 8081
