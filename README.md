@@ -56,7 +56,7 @@
 - [x] CI matrix 전략으로 멀티서비스 병렬 빌드
 - [x] DB 커넥션 풀 고갈 시나리오 (25.75% → 100% 성공률)
 - [x] N+1 쿼리 최적화 (9회 → 1회 쿼리)
-- [ ] 캐시 스탬피드 시나리오
+- [x] 캐시 스탬피드 시나리오 (분산 락 재사용, DB 쿼리 상수화)
 - [ ] Notification Service (FastAPI)
 - [ ] GKE 배포 + Terraform
 - [ ] Prometheus + Grafana 모니터링
