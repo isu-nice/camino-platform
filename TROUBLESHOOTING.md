@@ -133,6 +133,53 @@ export const options = {
 
 ---
 
+## 3. N+1 쿼리 문제
+
+### 문제 상황
+예약 목록 조회 API(`GET /api/reservations`)에서 각 예약이 참조하는 알베르게 이름까지 응답에 포함시켜야 했음. `Reservation`의 `@ManyToOne albergue` 필드가 지연 로딩(LAZY)이라, 목록을 순회하며 `albergue.getName()`을 호출할 때마다 개별 쿼리가 추가로 발생하는 구조였음.
+
+### 재현 방법
+- 서로 다른 알베르게 8곳에 걸쳐 예약 10건을 생성
+- `show-sql: true`로 실제 나가는 쿼리를 로그에서 직접 확인
+
+**시행착오**: 처음엔 테스트 데이터가 전부 같은 albergue_id를 참조해서, JPA 영속성 컨텍스트(1차 캐시)가 이미 조회한 id는 재사용해버려 N+1이 로그상 드러나지 않았음. 서로 다른 albergue를 참조하는 예약으로 데이터를 재구성한 뒤에야 문제가 명확히 나타남.
+
+### Before
+
+예약 10건 조회 시 발생한 쿼리:
+```
+select ... from reservations r1_0                              -- 1회
+select ... from albergues a1_0 where a1_0.id=?                 -- 8회 (서로 다른 albergue 개수만큼)
+```
+**총 쿼리 수: 9회** (1 + N, N = 8)
+
+### 해결
+`ReservationRepository`에 `JOIN FETCH`를 사용한 커스텀 쿼리를 추가해서, 연관된 `Albergue`를 지연 로딩 대신 즉시 하나의 쿼리로 함께 가져오도록 변경.
+
+```java
+@Query("SELECT r FROM Reservation r JOIN FETCH r.albergue")
+List<Reservation> findAllWithAlbergue();
+```
+
+### After
+
+동일한 데이터(예약 10건, 8개 알베르게)로 재조회:
+```
+select r1_0..., a1_0... from reservations r1_0 join albergues a1_0 on a1_0.id=r1_0.albergue_id
+```
+**총 쿼리 수: 1회**
+
+| 지표 | Before | After |
+|---|---|---|
+| 총 쿼리 수 | 9회 | **1회** |
+
+### 배운 점
+- 지연 로딩(LAZY) 자체는 불필요한 데이터를 안 가져오기 위한 좋은 기본값이지만, 목록 조회처럼 연관 데이터를 전부 써야 하는 상황에서는 오히려 쿼리 수를 폭증시킬 수 있다는 걸 확인함
+- JPA의 영속성 컨텍스트(1차 캐시)가 동일 트랜잭션 내 중복 조회를 막아주기 때문에, 테스트 데이터가 우연히 겹치면 N+1 문제가 가려질 수 있다는 것도 실험 중에 겪음 — 문제를 재현할 때 데이터 다양성이 실제로 중요하다는 걸 체감
+- `JOIN FETCH`는 단일 연관관계(`@ManyToOne`)에는 안전하지만, 컬렉션(`@OneToMany`) fetch join과 페이징을 같이 쓰면 메모리 페이징 문제가 생길 수 있어 상황에 따라 다르게 접근해야 함을 인지
+
+---
+
 ## 계속 추가할 것
 - [ ] DB 커넥션 풀 고갈 시나리오
 - [ ] 캐시 스탬피드
