@@ -2,6 +2,8 @@ package com.camino.albergue.service;
 
 import com.camino.albergue.domain.*;
 import com.camino.albergue.dto.ReservationRequest;
+import com.camino.albergue.event.ReservationEvent;
+import com.camino.albergue.event.ReservationEventPublisher;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,16 @@ public class ReservationService {
     private final AlbergueRepository albergueRepository;
     private final ReservationRepository reservationRepository;
     private final RedissonClient redissonClient;
+    private final ReservationEventPublisher eventPublisher;
 
     public ReservationService(AlbergueRepository albergueRepository,
                               ReservationRepository reservationRepository,
-                              RedissonClient redissonClient) {
+                              RedissonClient redissonClient,
+                              ReservationEventPublisher eventPublisher) {
         this.albergueRepository = albergueRepository;
         this.reservationRepository = reservationRepository;
         this.redissonClient = redissonClient;
+        this.eventPublisher = eventPublisher;
     }
 
     public Long reserve(ReservationRequest request) {
@@ -55,6 +60,15 @@ public class ReservationService {
         albergueRepository.save(albergue);
 
         Reservation reservation = new Reservation(albergue, request.getPilgrimId(), request.getReservationDate());
-        return reservationRepository.save(reservation).getId();
+        Reservation saved = reservationRepository.save(reservation);
+
+        eventPublisher.publish(new ReservationEvent(
+                saved.getId(),
+                saved.getPilgrimId(),
+                albergue.getName(),
+                saved.getReservationDate().toString()
+        ));
+
+        return saved.getId();
     }
 }
