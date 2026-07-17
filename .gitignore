@@ -36,6 +36,11 @@ out/
 /nbdist/
 /.nb-gradle/
 
+### Python ###
+notification-service/venv/
+notification-service/__pycache__/
+*.pyc
+
 ### VS Code ###
 .vscode/
 
