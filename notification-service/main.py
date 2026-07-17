@@ -1,11 +1,12 @@
+import os
 import asyncio
 import json
 import redis.asyncio as redis
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-REDIS_HOST = "localhost"
-REDIS_PORT = 6379
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 CHANNEL = "reservation-events"
 
 

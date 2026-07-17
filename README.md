@@ -14,7 +14,7 @@
                 Client
                   │
         ┌─────────┴─────────┐
-        │   GKE 클러스터      │
+        │   GKE 클러스터     │
         │                   │
    ┌────▼────┐   ┌─────────▼──────┐
    │  Auth   │   │   Albergue     │
@@ -22,12 +22,12 @@
    │(Spring) │   │  (Spring)      │
    └────┬────┘   └────────┬───────┘
         │                 │
-        └────────-┬───────┘
+        └────────┬────────┘
                   │
         ┌─────────┴─────────┐
-        │   PostgreSQL      │
-        │   Redis           │
-        └───────────────────┘
+        │   PostgreSQL       │
+        │   Redis            │
+        └─────────────────────┘
 
 (추후 추가 예정: Notification Service, GKE 배포, Terraform, CI/CD 완성)
 ```
@@ -37,6 +37,7 @@
 | 분류 | 기술 |
 |---|---|
 | Backend | Java 17, Spring Boot 3, Spring Data JPA, Spring Security |
+| Notification | Python 3, FastAPI, Redis Pub/Sub |
 | Auth | JWT (jjwt) |
 | Database | PostgreSQL, Redis |
 | Infra | Docker (멀티스테이지 빌드), Kubernetes (kind → GKE 예정) |
@@ -58,7 +59,7 @@
 - [x] N+1 쿼리 최적화 (9회 → 1회 쿼리)
 - [x] 캐시 스탬피드 시나리오 (분산 락 재사용, DB 쿼리 상수화)
 - [x] k8s 리소스 최적화 (request/limit, OOMKilled 재현/해결)
-- [ ] Notification Service (FastAPI)
+- [x] Notification Service (FastAPI) — Redis Pub/Sub으로 예약 이벤트 구독
 - [ ] GKE 배포 + Terraform
 - [ ] Prometheus + Grafana 모니터링
 - [ ] HPA (오토스케일링)
@@ -69,6 +70,7 @@
 camino-platform/
 ├── auth-service/         # 인증 (회원가입, 로그인, JWT)
 ├── albergue-service/     # 알베르게 예약 (동시성 처리 핵심)
+├── notification-service/ # 알림 (FastAPI, Redis Pub/Sub 구독)
 ├── k8s/                  # Kubernetes 매니페스트
 ├── load-tests/           # k6 부하테스트 스크립트
 ├── docker-compose.yml    # 로컬 개발 환경
